@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>IBDEX</title>
+<style>
+  :root{
+    --bg:#f7f9fb; --surface:#ffffff; --ink:#111827; --muted:#667085;
+    --line:#e5e7eb; --brand:#0f766e; --brand-2:#2563eb;
+    --font:"Inter","IBM Plex Sans","Segoe UI",Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0}
+  body{font-family:var(--font);background:var(--bg);color:var(--ink);letter-spacing:-.01em;
+       display:flex;align-items:center;justify-content:center;padding:24px}
+  .card{max-width:640px;width:100%;background:var(--surface);border:1px solid var(--line);
+        border-radius:16px;padding:40px 32px;box-shadow:0 20px 50px rgba(15,23,42,.08)}
+  h1{margin:0 0 4px;color:var(--brand);font-size:clamp(28px,6vw,36px);line-height:1.1}
+  .sub{margin:0 0 20px;color:var(--muted);font-size:15px}
+  p{line-height:1.55;font-size:15.5px}
+  .cta{display:inline-block;margin:18px 0 0;padding:13px 26px;background:var(--brand);
+       color:#fff;text-decoration:none;border-radius:10px;font-weight:600;font-size:15.5px}
+  .cta:hover{background:#0d5f58}
+  .disclaimer{margin-top:26px;padding:14px 16px;border:1px solid var(--line);border-radius:10px;
+              background:#fafbfc;font-size:13px;color:var(--muted);line-height:1.5}
+  .disclaimer strong{color:var(--ink)}
+  footer{margin-top:22px;font-size:12.5px;color:var(--muted)}
+  footer a{color:var(--brand-2)}
+  @media (max-width:480px){.card{padding:28px 20px}}
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>IBDEX</h1>
+    <p class="sub">IBD Molecular Endotype Explorer</p>
+    <p>
+      IBDEX projects intestinal bulk RNA-seq samples into a frozen, batch- and
+      tissue-debiased latent reference learned from 3,168 harmonised IBD
+      samples across four cohorts, and surfaces decoder-native pathway
+      activity scores alongside the discovered colon and ileum endotypes.
+    </p>
+    <a class="cta" href="explorer/IBDEX_refined.html">Open Explorer &rarr;</a>
+    <div class="disclaimer">
+      <strong>Research use only.</strong> IBDEX is a research tool for
+      exploring molecular endotype structure in IBD transcriptomic data.
+      It is not a diagnostic device and is not validated for clinical
+      decision-making. All data loaded into the explorer is processed
+      locally in your browser and is never transmitted to any server.
+    </div>
+    <footer>
+      Source and the <code>ibdex-projector</code> command-line tool:
+      <a href="https://github.com/ajithak9945/IBDEX_Package">github.com/ajithak9945/IBDEX_Package</a>
+    </footer>
+  </div>
+</body>
+</html>
