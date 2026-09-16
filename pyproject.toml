@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ibdex-projector"
+version = "0.1.0"
+description = "Project raw intestinal bulk RNA-seq counts into the frozen IBDEX latent reference."
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+authors = [
+  {name = "IBDEX authors"}
+]
+dependencies = [
+  "numpy>=1.23",
+  "pandas>=1.5",
+  "torch>=2.0"
+]
+
+[project.optional-dependencies]
+test = ["pytest>=7"]
+
+[project.scripts]
+ibdex = "ibdex_projector.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+ibdex_projector = ["artifacts/*"]

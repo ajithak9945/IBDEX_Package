@@ -1,0 +1,74 @@
+{
+  "best_params": {
+    "latent_dim": 16,
+    "hidden_dim": 512,
+    "depth": 2,
+    "dropout": 0.1,
+    "batch_size": 32,
+    "lr": 0.0006,
+    "weight_decay": 0.00031,
+    "beta_max": 1,
+    "beta_cycle_length": 1,
+    "beta_plateau_frac": 1.0,
+    "recon_weight": 1,
+    "dataset_sampler_weight": 1.0,
+    "tissue_sampler_weight": 0.25,
+    "balanced_dataset_batches": true,
+    "lambda_adv_dataset": 120,
+    "lambda_adv_dataset_linear": 120,
+    "lambda_adv_tissue": 80,
+    "beta_ramp_start_epoch": 1,
+    "beta_ramp_end_epoch": 120,
+    "adv_ramp_start_epoch": 1,
+    "adv_ramp_end_epoch": 120,
+    "tissue_adv_ramp_start_epoch": 1,
+    "tissue_adv_ramp_end_epoch": 120
+  },
+  "best_epoch": 179,
+  "best_val_total": 1021.4341693153461,
+  "input_dim": 3000,
+  "encoder_condition_dim": 6,
+  "decoder_condition_dim": 11,
+  "dataset_classes": [
+    "GSE165512",
+    "GSE193677",
+    "HMP2",
+    "IBDome"
+  ],
+  "tissue_raw_classes": [
+    "colon_unspecified",
+    "ileum",
+    "left_colon",
+    "rectum",
+    "right_colon",
+    "sigmoid",
+    "transverse_colon"
+  ],
+  "disease_classes": [
+    "CD",
+    "Control",
+    "UC"
+  ],
+  "loss_reduction": "recon sum genes / batch; KL sum dims / batch",
+  "encoder_conditions": [
+    "broad_tissue_model_colon",
+    "broad_tissue_model_ileum",
+    "dataset_model_GSE165512",
+    "dataset_model_GSE193677",
+    "dataset_model_HMP2",
+    "dataset_model_IBDome"
+  ],
+  "decoder_conditions": [
+    "dataset_model_GSE165512",
+    "dataset_model_GSE193677",
+    "dataset_model_HMP2",
+    "dataset_model_IBDome",
+    "tissue_raw_model_colon_unspecified",
+    "tissue_raw_model_ileum",
+    "tissue_raw_model_left_colon",
+    "tissue_raw_model_rectum",
+    "tissue_raw_model_right_colon",
+    "tissue_raw_model_sigmoid",
+    "tissue_raw_model_transverse_colon"
+  ]
+}
