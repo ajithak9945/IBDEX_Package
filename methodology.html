@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Methodology &mdash; IBDEX</title>
-<meta name="description" content="A condensed overview of the IBDEX pipeline: panel selection, the conditional VAE, endotype discovery, and external projection." />
+<title>Methodology: IBDex</title>
+<meta name="description" content="A condensed overview of the IBDex pipeline: panel selection, the conditional VAE, endotype discovery, and external projection." />
 <link rel="stylesheet" href="assets/site.css" />
 </head>
 <body>
 <header class="site-header">
   <nav class="nav">
-    <a class="brand" href="index.html"><span class="dot"></span> IBDEX</a>
+    <a class="brand" href="index.html"><span class="dot"></span> IBDex</a>
     <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
     </button>
@@ -28,7 +28,7 @@
 <main>
   <div class="wrap hero">
     <span class="pill">Methodology</span>
-    <h1>How IBDEX was built</h1>
+    <h1>How IBDex was built</h1>
     <p class="lede">A skimmable overview. For full methodological detail, see the manuscript and source repository.</p>
   </div>
 
@@ -48,7 +48,7 @@
       <p style="color:var(--muted)">
         A defensible 3,000-gene panel was selected by a multi-evidence weighted
         score across STRING, Reactome, KEGG, GO-BP, Open Targets, GWAS and a
-        landmark gene set &mdash; keeping disease-relevant genes while removing
+        landmark gene set, keeping disease-relevant genes while removing
         batch- and tissue-driven noise.
       </p>
     </div>
@@ -75,13 +75,13 @@
       <p style="color:var(--muted)">
         Decoder-native, tissue-specific pathway scores are computed directly
         from the latent space and calibrated against the reference cohort's
-        distribution &mdash; validated against ssGSEA, but distinct from it.
+        distribution, validated against ssGSEA but distinct from it.
       </p>
     </div>
     <div class="card">
       <h3>6. External projection</h3>
       <p style="color:var(--muted)">
-        New samples &mdash; including entirely external cohorts &mdash; are projected
+        New samples, including entirely external cohorts, are projected
         into the frozen geometry without retraining. All dataset condition
         indicators are set to zero, matching the setting where the incoming
         cohort is not one of the four training datasets.
@@ -98,7 +98,7 @@
 
 <footer class="site-footer">
   <div class="wrap">
-    <span>IBDEX &middot; University of Birmingham</span>
+    <span>IBDex &middot; University of Birmingham</span>
     <span><a href="https://github.com/ajithak9945/IBDEX_Package">Source on GitHub</a></span>
   </div>
 </footer>

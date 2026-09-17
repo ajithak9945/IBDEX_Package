@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>IBDEX</title>
+  <title>IBDex</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.27.0/plotly.min.js"></script>
   <style>
 
@@ -78,7 +78,7 @@
     <header class="topbar">
       <div class="topbar-row topbar-main">
         <div class="brand">
-          <div><h1><a href="../index.html" style="color:inherit;text-decoration:none">IBDEX</a></h1><span>Latent endotype explorer &middot; <a href="../index.html" style="color:inherit">home</a></span></div>
+          <div><h1><a href="../index.html" style="color:inherit;text-decoration:none">IBDex</a></h1><span>Latent endotype explorer &middot; <a href="../index.html" style="color:inherit">home</a></span></div>
         </div>
         <div class="view-controls">
           <div class="seg" aria-label="Tissue selector"><button id="btnColon" class="active" type="button">Colon</button><button id="btnIleum" type="button">Ileum</button></div>
@@ -105,7 +105,7 @@
           <div class="patient-main">
             <div class="patient-id"><span class="dot"></span><span id="patientTitle">No Patient Selected</span></div>
             <div class="info-row"><span>Sample</span><span id="patientSub">Select A Point</span></div>
-            <div class="info-row"><span>Disease</span><span id="diseaseBadge" class="badge">—</span></div>
+            <div class="info-row"><span>Disease</span><span id="diseaseBadge" class="badge">–</span></div>
           </div>
           <div class="chips" id="patientChips"></div>
         </article>
@@ -124,8 +124,8 @@
       <section class="main-map">
         <article class="card map-card">
           <div class="stats" aria-label="Explorer Summary">
-            <span class="stat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M7 7c2.5-2.5 7.5 7.5 10 5s-2.5-7.5 0-10"/><path d="M7 17c2.5 2.5 7.5-7.5 10-5s-2.5 7.5 0 10"/></svg><span id="mSamples">—</span> Samples</span>
-            <span class="stat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M12 2v4m0 12v4m10-10h-4M6 12H2"/></svg><span id="mClusters">—</span> Endotypes</span>
+            <span class="stat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M7 7c2.5-2.5 7.5 7.5 10 5s-2.5-7.5 0-10"/><path d="M7 17c2.5 2.5 7.5-7.5 10-5s-2.5 7.5 0 10"/></svg><span id="mSamples">–</span> Samples</span>
+            <span class="stat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M12 2v4m0 12v4m10-10h-4M6 12H2"/></svg><span id="mClusters">–</span> Endotypes</span>
             <span class="stat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19V5m0 14h16M8 16V9m4 7V6m4 10v-4"/></svg><span>15</span> Pathways</span>
             <span class="stat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg><span id="mCohorts">4</span> Cohorts</span>
             <span style="display:none"><span id="mSampleNote"></span><span id="mClusterNote"></span><span id="mAxis"></span><span id="mAxisNote"></span><span id="mSignal"></span><span id="mSignalNote"></span></span>
@@ -231,9 +231,9 @@
       $('mClusters').textContent = Object.keys(t).length;
       $('mClusterNote').textContent = `Current Tissue`;
       if($('mCohorts')) $('mCohorts').textContent = [...new Set(allPts().map(p=>p.coh))].length + (EXT.length ? ` + ${[...new Set(extPts().map(p=>p.coh))].length} External` : '');
-      $('mAxis').textContent = meanAxis ? meanAxis.toFixed(2) : '—';
+      $('mAxis').textContent = meanAxis ? meanAxis.toFixed(2) : '–';
       $('mAxisNote').textContent = AX[state.axis].n;
-      $('mSignal').textContent = pts.length ? AX[topIdx].s : '—';
+      $('mSignal').textContent = pts.length ? AX[topIdx].s : '–';
       $('mSignalNote').textContent = pts.length ? `${axisMeans[topIdx].toFixed(2)} mean score` : 'no visible samples';
     }
 
@@ -260,8 +260,8 @@
       const pts=filtered(), t=types();
       $('clusterList').innerHTML = Object.entries(t).map(([id,td])=>{
         const sub=pts.filter(p=>p.et===id);
-        const topAxis = sub.length ? AX.map((a,i)=>({name:a.s,val:median(sub.map(p=>p.sc[i]))})).sort((a,b)=>b.val-a.val)[0] : {name:'—',val:0};
-        return `<div class="clusterrow" role="button" data-cluster="${id}"><span class="swatch" style="background:${td.c}"></span><div><b>${id}: ${td.n}</b><small>${topAxis.name} median ${topAxis.val ? topAxis.val.toFixed(2) : '—'}</small></div><span class="countpill">n=${sub.length}</span></div>`;
+        const topAxis = sub.length ? AX.map((a,i)=>({name:a.s,val:median(sub.map(p=>p.sc[i]))})).sort((a,b)=>b.val-a.val)[0] : {name:'–',val:0};
+        return `<div class="clusterrow" role="button" data-cluster="${id}"><span class="swatch" style="background:${td.c}"></span><div><b>${id}: ${td.n}</b><small>${topAxis.name} median ${topAxis.val ? topAxis.val.toFixed(2) : '–'}</small></div><span class="countpill">n=${sub.length}</span></div>`;
       }).join('');
       document.querySelectorAll('.clusterrow').forEach(row=>row.addEventListener('click',()=>{
         const id=row.dataset.cluster; const candidate=filtered().filter(p=>p.et===id).sort((a,b)=>b.sc[state.axis]-a.sc[state.axis])[0]; if(candidate) selectPatient(candidate.id);
@@ -410,7 +410,7 @@
       const pts=filtered();
       const existing = pts.find(p=>p.id===state.selected);
       if(existing) selectPatient(existing.id); else if(pts[0]) selectPatient(pts.sort((a,b)=>b.sc[state.axis]-a.sc[state.axis])[0].id);
-      else { state.selected=null; $('patientTitle').textContent='No patient selected'; $('patientSub').textContent='No visible samples under current filters.'; $('diseaseBadge').textContent='—'; $('patientChips').innerHTML=''; $('radar').innerHTML=''; $('axisBars').innerHTML=''; if($('heatmap')) $('heatmap').innerHTML=''; $('interpretation').innerHTML='<strong>No Data Visible.</strong> Clear filters to restore the patient profile panel.'; }
+      else { state.selected=null; $('patientTitle').textContent='No patient selected'; $('patientSub').textContent='No visible samples under current filters.'; $('diseaseBadge').textContent='–'; $('patientChips').innerHTML=''; $('radar').innerHTML=''; $('axisBars').innerHTML=''; if($('heatmap')) $('heatmap').innerHTML=''; $('interpretation').innerHTML='<strong>No Data Visible.</strong> Clear filters to restore the patient profile panel.'; }
     }
 
     function renderGenes(){
@@ -418,8 +418,8 @@
       const geneInfo = D.pathway_genes?.[state.tissue]?.[ax.id] || {};
       const up = geneInfo.up_genes || ax.up_genes || [];
       const dn = geneInfo.dn_genes || ax.dn_genes || [];
-      $('upGenes').innerHTML = up.length ? up.map(g=>`<span class="gchip up">${g}</span>`).join('') : '<span style="color:var(--muted);font-size:11px">—</span>';
-      $('dnGenes').innerHTML = dn.length ? dn.map(g=>`<span class="gchip dn">${g}</span>`).join('') : '<span style="color:var(--muted);font-size:11px">—</span>';
+      $('upGenes').innerHTML = up.length ? up.map(g=>`<span class="gchip up">${g}</span>`).join('') : '<span style="color:var(--muted);font-size:11px">–</span>';
+      $('dnGenes').innerHTML = dn.length ? dn.map(g=>`<span class="gchip dn">${g}</span>`).join('') : '<span style="color:var(--muted);font-size:11px">–</span>';
     }
 
     function rerender(keepSelection=false){
@@ -460,7 +460,7 @@
           const loaded=[];
           for(const s of data.samples){
             if(!s.id||!s.tissue||!Array.isArray(s.sc)){console.warn('Skipping invalid sample',s.id);continue;}
-            if(s.sc.length!==AX.length){console.warn(`${s.id}: sc has ${s.sc.length} values but AX has ${AX.length} — skipping`);continue;}
+            if(s.sc.length!==AX.length){console.warn(`${s.id}: sc has ${s.sc.length} values but AX has ${AX.length}; skipping`);continue;}
             loaded.push({id:String(s.id),short:String(s.id),tissue:s.tissue,et:s.cluster||'External',ec:s.cluster_color||'#FFD700',cluster_confidence:s.cluster_confidence??null,disease:s.disease||'Unknown',coh:s.cohort||'External',u1:+s.u1,u2:+s.u2,sc:s.sc.map(Number),isExternal:true});
           }
           if(!loaded.length){alert('No valid samples found. Check that tissue, id, sc fields are present and sc length matches the number of active axes ('+AX.length+').');return;}

@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Understanding the Plots &mdash; IBDEX</title>
-<meta name="description" content="What each visualization in the IBDEX explorer shows and how to read it." />
+<title>Understanding the Plots: IBDex</title>
+<meta name="description" content="What each visualization in the IBDex explorer shows and how to read it." />
 <link rel="stylesheet" href="assets/site.css" />
 </head>
 <body>
 <header class="site-header">
   <nav class="nav">
-    <a class="brand" href="index.html"><span class="dot"></span> IBDEX</a>
+    <a class="brand" href="index.html"><span class="dot"></span> IBDex</a>
     <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
     </button>
@@ -37,7 +37,7 @@
       <h3>The axis scatter (2D / 3D)</h3>
       <p style="color:var(--muted)">
         Each point is one sample, placed by its position in the model's learned
-        latent space &mdash; a compressed representation of that sample's expression
+        latent space, a compressed representation of that sample's expression
         profile with dataset and tissue-site effects suppressed. Points that sit
         close together are biologically similar in a way the model considers
         meaningful, independent of which cohort or exact tissue site they came from.
@@ -49,8 +49,8 @@
       <h3>The radar profile</h3>
       <p style="color:var(--muted)">
         A shape-based summary of one selected sample's calibrated pathway scores
-        across every axis at once. It's built for fast visual comparison &mdash;
-        two samples with similar radar shapes have a similar overall pathway
+        across every axis at once. It's built for fast visual comparison.
+        Two samples with similar radar shapes have a similar overall pathway
         activity signature, even if you haven't looked at the individual numbers.
       </p>
     </div>
@@ -66,8 +66,8 @@
       <h3>Reading the pathway scores themselves</h3>
       <p style="color:var(--muted)">
         Pathway scores are latent decoder-derived pathway coordinates,
-        standardized against the internal IBDEX reference distribution &mdash;
-        they are <strong>not</strong> ssGSEA scores, and shouldn't be compared
+        standardized against the internal IBDex reference distribution.
+        They are <strong>not</strong> ssGSEA scores, and shouldn't be compared
         directly to ssGSEA output from another tool. A value near 0 means
         "typical for the reference cohort"; larger positive or negative values
         mean further from that typical range in either direction.
@@ -78,7 +78,7 @@
 
 <footer class="site-footer">
   <div class="wrap">
-    <span>IBDEX &middot; University of Birmingham</span>
+    <span>IBDex &middot; University of Birmingham</span>
     <span><a href="https://github.com/ajithak9945/IBDEX_Package">Source on GitHub</a></span>
   </div>
 </footer>
