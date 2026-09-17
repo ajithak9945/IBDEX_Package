@@ -70,6 +70,25 @@
       .clusterrow{grid-template-columns:auto 1fr auto;padding:10px}
       .chip{font-size:11px;padding:5px 8px}
     }
+
+    /* --- collapsible filters on mobile --- */
+    .fields-grid{display:contents}
+    .filters-toggle{display:none}
+    @media(max-width:760px){
+      .filters-toggle{
+        display:flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);
+        border-radius:10px;padding:10px 14px;font-size:13px;font-weight:800;min-height:44px;cursor:pointer;
+      }
+      .filters-toggle .chev{transition:transform .15s ease}
+      .filters-toggle.open .chev{transform:rotate(180deg)}
+      .topbar-filters{
+        display:none;flex-direction:column;gap:10px;margin-top:10px;padding-top:10px;
+        border-top:1px solid var(--line);
+      }
+      .topbar-filters.open{display:flex}
+      .topbar-filters .field,.topbar-filters .field.search{min-width:0;width:100%;min-height:46px}
+      .topbar-filters .fields-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}
+    }
   </style>
 </head>
 
@@ -86,13 +105,19 @@
           <button class="btn" id="themeBtn" type="button">Dark mode</button>
           <button class="btn primary" id="uploadBtn" type="button">Upload external JSON</button>
           <input type="file" id="fileInput" accept=".json,application/json" />
+          <button class="filters-toggle" id="filtersToggle" type="button"
+            onclick="var f=document.getElementById('topbarFilters');var open=f.classList.toggle('open');this.classList.toggle('open',open);this.querySelector('.label').textContent=open?'Hide filters':'Filters';">
+            <span class="label">Filters</span><span class="chev">&#9662;</span>
+          </button>
         </div>
       </div>
-      <div class="topbar-row topbar-filters">
-        <div class="field"><label for="axisSelect">Pathway</label><select id="axisSelect"></select></div>
-        <div class="field"><label for="cohortSelect">Cohort</label><select id="cohortSelect"></select></div>
-        <div class="field"><label for="diseaseSelect">Disease</label><select id="diseaseSelect"></select></div>
-        <div class="field search"><label for="searchBox">Search patient ID</label><input id="searchBox" type="search" placeholder="C-20491 / GSM..." /><span class="search-icon">⌕</span></div>
+      <div class="topbar-row topbar-filters" id="topbarFilters">
+        <div class="fields-grid">
+          <div class="field"><label for="axisSelect">Pathway</label><select id="axisSelect"></select></div>
+          <div class="field"><label for="cohortSelect">Cohort</label><select id="cohortSelect"></select></div>
+          <div class="field"><label for="diseaseSelect">Disease</label><select id="diseaseSelect"></select></div>
+          <div class="field search"><label for="searchBox">Search patient ID</label><input id="searchBox" type="search" placeholder="C-20491 / GSM..." /><span class="search-icon">⌕</span></div>
+        </div>
         <span id="extStatus" class="ext-badge" style="display:none"><span id="extCount">0</span> external <button class="ext-clear" id="clearExtBtn" type="button">Clear</button></span>
         <button class="btn" id="focusBtn" type="button">High inflammation</button>
       </div>

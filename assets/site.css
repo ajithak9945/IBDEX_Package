@@ -36,12 +36,14 @@ img{max-width:100%}
 .nav-toggle{display:none;background:none;border:1px solid var(--line);border-radius:8px;padding:8px 10px;cursor:pointer}
 .nav-toggle svg{display:block}
 
+body.nav-open{overflow:hidden}
+
 @media (max-width:760px){
   .nav-toggle{display:block}
   .nav-links{
     position:fixed;inset:60px 0 0 0;background:var(--surface);flex-direction:column;align-items:stretch;
     padding:14px;gap:2px;transform:translateY(-8px);opacity:0;pointer-events:none;transition:.16s ease;
-    border-top:1px solid var(--line);overflow-y:auto;
+    border-top:1px solid var(--line);overflow-y:auto;z-index:60;
   }
   .nav-links.open{transform:translateY(0);opacity:1;pointer-events:auto}
   .nav-links a{padding:14px 12px;font-size:16px;border-bottom:1px solid var(--line)}
