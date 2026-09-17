@@ -40,6 +40,11 @@ body.nav-open{overflow:hidden}
 
 @media (max-width:760px){
   .nav-toggle{display:block}
+  /* backdrop-filter on .site-header creates a new containing block for any
+     position:fixed descendant, so the fixed mobile menu below was being
+     positioned relative to the 60px-tall header instead of the viewport.
+     Drop the blur on mobile so .nav-links fixes to the viewport correctly. */
+  .site-header{backdrop-filter:none;-webkit-backdrop-filter:none}
   .nav-links{
     position:fixed;inset:60px 0 0 0;background:var(--surface);flex-direction:column;align-items:stretch;
     padding:14px;gap:2px;transform:translateY(-8px);opacity:0;pointer-events:none;transition:.16s ease;
