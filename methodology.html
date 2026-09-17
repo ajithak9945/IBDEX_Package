@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Methodology &mdash; IBDEX</title>
+<meta name="description" content="A condensed overview of the IBDEX pipeline: panel selection, the conditional VAE, endotype discovery, and external projection." />
+<link rel="stylesheet" href="assets/site.css" />
+</head>
+<body>
+<header class="site-header">
+  <nav class="nav">
+    <a class="brand" href="index.html"><span class="dot"></span> IBDEX</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    </button>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="quickstart.html">Quick Start</a>
+      <a href="plots.html">Understanding the Plots</a>
+      <a href="methodology.html" class="active">Methodology</a>
+      <a href="about.html">About</a>
+      <a href="explorer/IBDEX_refined.html" class="cta">Open Explorer</a>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <div class="wrap hero">
+    <span class="pill">Methodology</span>
+    <h1>How IBDEX was built</h1>
+    <p class="lede">A skimmable overview. For full methodological detail, see the manuscript and source repository.</p>
+  </div>
+
+  <div class="wrap">
+    <div class="card">
+      <h3>1. Data</h3>
+      <p style="color:var(--muted)">
+        3,168 adult intestinal bulk RNA-seq samples harmonised across four IBD
+        cohorts (GSE193677, IBDome, HMP2, GSE165512). Gene identifiers were
+        mapped to HGNC symbols, and expression was normalised as log2(CPM&nbsp;+&nbsp;1).
+        Samples were split by patient into train/validation/test (70/15/15),
+        stratified by disease, so no patient appears in more than one split.
+      </p>
+    </div>
+    <div class="card">
+      <h3>2. Gene panel selection</h3>
+      <p style="color:var(--muted)">
+        A defensible 3,000-gene panel was selected by a multi-evidence weighted
+        score across STRING, Reactome, KEGG, GO-BP, Open Targets, GWAS and a
+        landmark gene set &mdash; keeping disease-relevant genes while removing
+        batch- and tissue-driven noise.
+      </p>
+    </div>
+    <div class="card">
+      <h3>3. The conditional variational autoencoder</h3>
+      <p style="color:var(--muted)">
+        A CVAE with gradient-reversal adversaries is trained to suppress dataset
+        and fine tissue-site identity in its 16-dimensional latent space, while
+        retaining disease and inflammation signal. The frozen encoder is what
+        the explorer and the <code>ibdex-projector</code> CLI both use to place
+        a sample into that space.
+      </p>
+    </div>
+    <div class="card">
+      <h3>4. Endotype discovery</h3>
+      <p style="color:var(--muted)">
+        Four colon (C1&ndash;C4) and four ileum (I1&ndash;I4) endotypes were discovered
+        by consensus clustering over four base algorithms, run separately per
+        tissue given their distinct baseline biology.
+      </p>
+    </div>
+    <div class="card">
+      <h3>5. Pathway scoring</h3>
+      <p style="color:var(--muted)">
+        Decoder-native, tissue-specific pathway scores are computed directly
+        from the latent space and calibrated against the reference cohort's
+        distribution &mdash; validated against ssGSEA, but distinct from it.
+      </p>
+    </div>
+    <div class="card">
+      <h3>6. External projection</h3>
+      <p style="color:var(--muted)">
+        New samples &mdash; including entirely external cohorts &mdash; are projected
+        into the frozen geometry without retraining. All dataset condition
+        indicators are set to zero, matching the setting where the incoming
+        cohort is not one of the four training datasets.
+      </p>
+    </div>
+
+    <div class="disclaimer" style="margin-top:8px">
+      Full pipeline code, the frozen model weights, and the <code>ibdex-projector</code>
+      command-line tool are available at
+      <a href="https://github.com/ajithak9945/IBDEX_Package">github.com/ajithak9945/IBDEX_Package</a>.
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>IBDEX &middot; University of Birmingham</span>
+    <span><a href="https://github.com/ajithak9945/IBDEX_Package">Source on GitHub</a></span>
+  </div>
+</footer>
+<script src="assets/nav.js"></script>
+</body>
+</html>

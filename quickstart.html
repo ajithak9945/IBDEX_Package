@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Quick Start &mdash; IBDEX</title>
+<meta name="description" content="An annotated tour of the IBDEX explorer's controls." />
+<link rel="stylesheet" href="assets/site.css" />
+</head>
+<body>
+<header class="site-header">
+  <nav class="nav">
+    <a class="brand" href="index.html"><span class="dot"></span> IBDEX</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    </button>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="quickstart.html" class="active">Quick Start</a>
+      <a href="plots.html">Understanding the Plots</a>
+      <a href="methodology.html">Methodology</a>
+      <a href="about.html">About</a>
+      <a href="explorer/IBDEX_refined.html" class="cta">Open Explorer</a>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <div class="wrap hero">
+    <span class="pill">Quick Start</span>
+    <h1>Finding your way around the explorer</h1>
+    <p class="lede">A short tour of what's on screen and what each control does &mdash; no prior familiarity with the tool assumed.</p>
+  </div>
+
+  <div class="wrap">
+    <div class="card">
+      <div class="step">
+        <div class="num">1</div>
+        <div class="body">
+          <h3>Tissue toggle &mdash; Colon / Ileum</h3>
+          <p>Endotypes were discovered separately for colon and ileum samples, since the two tissues have different baseline biology. Switching this toggle changes which axis list, scatter plot, and endotype set you're looking at.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="num">2</div>
+        <div class="body">
+          <h3>Axis selector</h3>
+          <p>Choose which pathway axis (e.g. inflammatory response, TNF-alpha/NF-kB signalling) colours and orders the scatter plot. This changes which patients rise to the top of the ranked list, not the underlying data.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="num">3</div>
+        <div class="body">
+          <h3>2D / 3D scatter</h3>
+          <p>Every point is one sample, positioned by its latent coordinates. Toggle between a flat 2D view and a rotatable 3D view of the same underlying space. Click any point to select that sample.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="num">4</div>
+        <div class="body">
+          <h3>Patient profile panel</h3>
+          <p>Once a sample is selected, this panel shows its full pathway profile. Switch between the <strong>Radar</strong> tab (a shape you can compare at a glance against typical endotype profiles) and the <strong>Heatmap</strong> tab (exact values across every axis).</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="num">5</div>
+        <div class="body">
+          <h3>Cohort, disease and search filters</h3>
+          <p>Narrow the visible samples by cohort, disease label, or a free-text search on sample ID &mdash; useful for focusing on one dataset or following a specific patient.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="num">6</div>
+        <div class="body">
+          <h3>Load external samples</h3>
+          <p>Use the upload button to load a JSON file &mdash; for example, output from the <code>ibdex-projector</code> CLI run on your own cohort &mdash; and see those samples plotted alongside the reference distribution. This happens entirely in your browser; nothing is uploaded anywhere.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="disclaimer" style="margin-top:20px">
+      Want the deeper explanation of what each plot is actually showing?
+      See <a href="plots.html">Understanding the Plots</a>.
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>IBDEX &middot; University of Birmingham</span>
+    <span><a href="https://github.com/ajithak9945/IBDEX_Package">Source on GitHub</a></span>
+  </div>
+</footer>
+<script src="assets/nav.js"></script>
+</body>
+</html>

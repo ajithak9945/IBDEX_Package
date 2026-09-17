@@ -41,6 +41,35 @@
     @media(max-width:1180px){.topbar{padding:14px}.workspace{grid-template-columns:1fr}.left-rail{display:grid;grid-template-columns:1fr 1fr}.right-rail{display:grid;grid-template-columns:1fr 1fr}.plot-shell,.plotwrap{min-height:620px}.genepanel{grid-template-columns:1fr 1fr}}
     @media(max-width:760px){.app{padding:0 10px 18px}.brand h1{font-size:26px}.field,.field.search{min-width:100%;width:100%}.topbar-main{flex-direction:column;align-items:flex-start}.left-rail,.right-rail,.genepanel{display:flex;flex-direction:column}.stats{flex-wrap:wrap;gap:12px}.plot-shell,.plotwrap{min-height:430px}.radarbox{height:300px}}
 
+    /* --- extra mobile-friendly pass --- */
+    .heatmap-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+    @media(max-width:760px){
+      html{-webkit-text-size-adjust:100%}
+      .topbar{border-radius:0 0 14px 14px;padding:12px}
+      .brand h1{font-size:22px}
+      .view-controls{width:100%;justify-content:space-between}
+      .seg{flex:1}
+      .seg button{flex:1;min-height:44px}
+      .btn{min-height:44px}
+      .patient-id{font-size:19px;flex-wrap:wrap}
+      .tabs{margin:0 14px 10px}
+      .tab{min-height:44px;display:flex;align-items:center;justify-content:center}
+      .heatmap-table td:first-child{max-width:120px}
+      .heatmap-table th,.heatmap-table td{padding:8px 7px;font-size:11px}
+      .stats{gap:16px}
+      .genepanel{gap:10px}
+      .section,.map-card,.sidehdr,.patient-main{padding-left:14px;padding-right:14px}
+    }
+    @media(max-width:480px){
+      .plot-shell,.plotwrap{min-height:340px}
+      .radarbox{height:260px}
+      .brand h1{font-size:19px}
+      .field{min-height:48px}
+      .stat{font-size:12.5px;gap:5px}
+      .stat svg{width:15px;height:15px}
+      .clusterrow{grid-template-columns:auto 1fr auto;padding:10px}
+      .chip{font-size:11px;padding:5px 8px}
+    }
   </style>
 </head>
 
@@ -49,7 +78,7 @@
     <header class="topbar">
       <div class="topbar-row topbar-main">
         <div class="brand">
-          <div><h1>IBDEX</h1><span>Latent endotype explorer</span></div>
+          <div><h1><a href="../index.html" style="color:inherit;text-decoration:none">IBDEX</a></h1><span>Latent endotype explorer &middot; <a href="../index.html" style="color:inherit">home</a></span></div>
         </div>
         <div class="view-controls">
           <div class="seg" aria-label="Tissue selector"><button id="btnColon" class="active" type="button">Colon</button><button id="btnIleum" type="button">Ileum</button></div>
