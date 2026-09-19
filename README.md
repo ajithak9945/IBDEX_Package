@@ -13,7 +13,9 @@ The command-line tool performs the full public projection path:
 6. Apply training z-score normalization and clipping.
 7. Encode samples with the frozen CVAE using dataset condition zero.
 8. Compute calibrated latent pathway scores.
-9. Write an explorer-ready JSON file.
+9. Place each sample onto the reference UMAP layout and assign it to its
+   nearest discovered endotype.
+10. Write an explorer-ready JSON file.
 
 ## Install locally
 
@@ -29,7 +31,9 @@ gene IDs with or without version suffixes, NCBI Entrez GeneIDs, or a mixture.
 
 Metadata must contain one row per sample and a tissue column. Accepted tissue
 values include `colon`, `ileum`, `left_colon`, `right_colon`, `rectum`,
-`sigmoid`, `transverse_colon` and `colon_unspecified`.
+`sigmoid`, `transverse_colon` and `colon_unspecified`. Optional `disease` and
+`cohort` columns are passed through into the output JSON and shown in the
+explorer's patient card if present.
 
 ## Use
 
@@ -42,7 +46,16 @@ ibdex project \
   --out ibdex_projection.json
 ```
 
-The JSON can be loaded by the IBDEX HTML explorer.
+The JSON can be loaded directly through the explorer's "Upload external JSON"
+button. Each sample in the output includes the `sc` (calibrated pathway score)
+vector, `u1`/`u2` plot coordinates, and a `cluster` / `cluster_color` /
+`cluster_confidence` endotype assignment, all in the schema the explorer
+expects. Coordinates are produced by locating each new sample's nearest
+neighbours in pathway-score space among the 3,168-sample reference cohort and
+taking a distance-weighted average of their reference UMAP positions, since
+the original UMAP model used to lay out the reference cohort itself was not
+retained. `latent` (raw 16-D CVAE coordinates) and the full `pathway_scores`
+dictionary are also included for downstream analysis outside the explorer.
 
 ## Important interpretation
 

@@ -8,6 +8,7 @@ import pandas as pd
 import torch
 
 from .conditions import build_conditions
+from .embedding import place_sample, sc_vector
 from .model import load_model
 from .pathways import score_pathways
 from .preprocess import load_counts, preprocess_counts
@@ -46,20 +47,38 @@ def project_counts(
     z = mu.cpu().numpy()
     pathway_scores = score_pathways(z, tissues)
 
+    disease_col = next((c for c in ("disease", "Disease", "diagnosis") if c in metadata.columns), None)
+    cohort_col = next((c for c in ("cohort", "Cohort", "dataset") if c in metadata.columns), None)
+
     samples = []
     for i, sample_id in enumerate(x.index.tolist()):
-        samples.append({
+        row_pathway_scores = pathway_scores.iloc[i].to_dict()
+        sc = sc_vector(row_pathway_scores)
+        placement = place_sample(sc, tissues[i])
+
+        sample = {
             "id": sample_id,
             "tissue": tissues[i],
+            "sc": sc,
+            "u1": placement["u1"],
+            "u2": placement["u2"],
+            "cluster": placement["cluster"],
+            "cluster_color": placement["cluster_color"],
+            "cluster_confidence": placement["cluster_confidence"],
             "latent": {f"z{j}": float(z[i, j]) for j in range(z.shape[1])},
             "pathway_scores": {
                 k: (None if np.isnan(v) else float(v))
-                for k, v in pathway_scores.iloc[i].to_dict().items()
+                for k, v in row_pathway_scores.items()
             },
-        })
+        }
+        if disease_col is not None:
+            sample["disease"] = str(metadata.iloc[i][disease_col])
+        if cohort_col is not None:
+            sample["cohort"] = str(metadata.iloc[i][cohort_col])
+        samples.append(sample)
 
     return {
-        "ibdex_version": "0.1.0",
+        "ibdex_version": "0.2.0",
         "model": {
             "name": "IBDEX frozen tissue-conditioned CVAE",
             "latent_dim": int(config["best_params"]["latent_dim"]),

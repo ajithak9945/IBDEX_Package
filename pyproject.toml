@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ibdex-projector"
-version = "0.1.0"
+version = "0.2.0"
 description = "Project raw intestinal bulk RNA-seq counts into the frozen IBDEX latent reference."
 readme = "README.md"
 requires-python = ">=3.9"
