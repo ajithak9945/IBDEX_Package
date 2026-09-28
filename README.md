@@ -134,6 +134,119 @@ project_counts_to_json(
 a plain Python dict instead, if you want to inspect or post-process it
 before writing anything to disk.
 
+## Step-by-step walkthrough
+
+`project_counts_to_json` above is a convenience wrapper. Internally it calls
+six functions in sequence, and each one can be called on its own, which is
+useful for debugging or for building a custom pipeline. The output below is
+real, captured by running each step against `examples/counts_smoke.csv`.
+
+**1. Load the raw counts file.**
+
+```python
+from ibdex_projector.preprocess import load_counts
+
+counts = load_counts("examples/counts_smoke.csv")
+print(counts.shape)      # (3000, 3)
+print(counts.columns.tolist())   # ['gene_id', 'sample_001', 'sample_002']
+```
+
+**2. Resolve gene identifiers to HGNC symbols, normalize, and restrict to the 3,000-gene panel.**
+
+```python
+from ibdex_projector.preprocess import preprocess_counts
+
+x, qc = preprocess_counts(counts)
+print(x.shape)   # (2, 3000), samples x panel genes
+print(qc)
+# {'total_input_genes': 3000, 'mapped_genes': 3000, 'unmapped_genes': 0,
+#  'duplicated_symbols_after_mapping': 0, 'unique_symbols_after_collapse': 3000,
+#  'orientation': 'genes_x_samples', 'n_samples': 2, 'n_panel_genes': 3000,
+#  'n_panel_genes_present': 3000, 'n_panel_genes_missing': 0, 'missing_panel_genes': []}
+```
+
+**3. Load metadata and build the tissue-conditioning vectors the encoder expects.**
+
+```python
+import pandas as pd
+from ibdex_projector.conditions import build_conditions
+
+metadata = pd.read_csv("examples/metadata.csv").set_index("sample_id")
+enc_cond, dec_cond, tissues = build_conditions(metadata["tissue"].tolist())
+print(metadata["tissue"].tolist())   # ['colon', 'ileum']
+print(tissues)                       # ['colon_unspecified', 'ileum']
+print(enc_cond.shape)                # (2, 6)
+```
+
+`colon` resolves to `colon_unspecified` here. That is expected, not an
+error, the model conditions on specific colon sub-sites (ascending,
+descending, sigmoid, and so on) and falls back to an unspecified colon
+category when the metadata does not name one.
+
+**4. Load the frozen model and encode into the 16-dimensional latent space.**
+
+```python
+import torch
+from ibdex_projector.model import load_model
+
+model, config = load_model(device="cpu")
+print(config["best_params"]["latent_dim"])   # 16
+
+with torch.no_grad():
+    tx = torch.tensor(x.to_numpy(dtype="float32"))
+    tc = torch.tensor(enc_cond)
+    mu, logvar = model.encode(tx, tc)
+z = mu.numpy()
+print(z.shape)          # (2, 16)
+print(z[0][:4])         # [1.3847817, -2.0976980, 1.4880019, 0.2173322]
+```
+
+**5. Score pathways from the latent codes.**
+
+```python
+from ibdex_projector.pathways import score_pathways
+
+pathway_scores = score_pathways(z, tissues)
+print(pathway_scores.shape)   # (2, 65), samples x scored pathways
+print(pathway_scores.iloc[0][["HALLMARK_TNFA_SIGNALING_VIA_NFKB",
+                               "HALLMARK_INFLAMMATORY_RESPONSE",
+                               "HALLMARK_IL6_JAK_STAT3_SIGNALING"]].to_dict())
+# {'HALLMARK_TNFA_SIGNALING_VIA_NFKB': 15.345304, 'HALLMARK_INFLAMMATORY_RESPONSE': 2.505198,
+#  'HALLMARK_IL6_JAK_STAT3_SIGNALING': 3.701424}
+```
+
+Sixty-five pathways get scored in total, but only the sixteen the explorer
+displays get carried into the output JSON's `sc` vector.
+
+**6. Build the ordered `sc` vector and place the sample onto the reference UMAP layout.**
+
+```python
+from ibdex_projector.embedding import sc_vector, place_sample
+
+row0 = pathway_scores.iloc[0].to_dict()
+sc = sc_vector(row0)
+placement = place_sample(sc, tissues[0])
+print(sc)
+# [2.505, 15.345, 3.701, -0.776, 4.619, 7.156, 14.025, 5.854,
+#  9.077, 7.571, 16.561, 13.609, 1.393, 0.405, 11.243, 1.266]
+print(placement)
+# {'u1': 9.968854, 'u2': 0.706379, 'cluster': 'C1',
+#  'cluster_color': '#E41A1C', 'cluster_confidence': 0.8672}
+```
+
+`place_sample` finds the sample's 15 nearest neighbours in pathway-score
+space among the 3,168-sample reference cohort (same broad tissue) and takes
+a distance-weighted average of their `u1`/`u2` positions, plus a
+weighted-majority-vote cluster assignment.
+
+That `sc` vector, together with `placement`, is exactly what
+`project_counts_to_json` assembles into each sample's entry in the output
+JSON. Note the `sc` magnitudes above (up to 16.5) are far outside the
+normal calibrated range (roughly -3 to 3), because `counts_smoke.csv` is
+synthetic placeholder data meant only to exercise the pipeline, not a real
+biological sample. Real samples land in the calibrated range and plot
+sensibly among the reference cohort.
+
 ## Getting the JSON into the explorer
 
 Whichever way you ran it, you now have a JSON file (`ibdex_projection.json`
