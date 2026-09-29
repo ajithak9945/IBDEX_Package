@@ -49,8 +49,10 @@ latent geometry.
 - git, to clone the repository
 
 The package pulls in its own dependencies on install, including numpy >= 1.23,
-pandas >= 1.5 and torch >= 2.0. A GPU is not required; the frozen model runs
-on CPU (`--device cpu`, the default).
+pandas >= 1.5, torch >= 2.0, scikit-learn >= 1.3, scipy >= 1.10, and
+umap-learn >= 0.5 (the last three power endotype/UMAP placement, see
+"Important interpretation" below). A GPU is not required; the frozen model
+runs on CPU (`--device cpu`, the default).
 
 ## Install
 
@@ -211,12 +213,17 @@ print(pathway_scores.shape)   # (2, 65), samples x scored pathways
 print(pathway_scores.iloc[0][["HALLMARK_TNFA_SIGNALING_VIA_NFKB",
                                "HALLMARK_INFLAMMATORY_RESPONSE",
                                "HALLMARK_IL6_JAK_STAT3_SIGNALING"]].to_dict())
-# {'HALLMARK_TNFA_SIGNALING_VIA_NFKB': 15.345304, 'HALLMARK_INFLAMMATORY_RESPONSE': 2.505198,
-#  'HALLMARK_IL6_JAK_STAT3_SIGNALING': 3.701424}
+# {'HALLMARK_TNFA_SIGNALING_VIA_NFKB': 2.185941, 'HALLMARK_INFLAMMATORY_RESPONSE': 0.478269,
+#  'HALLMARK_IL6_JAK_STAT3_SIGNALING': 0.720717}
 ```
 
-Sixty-five pathways get scored in total, but only the sixteen the explorer
-displays get carried into the output JSON's `sc` vector.
+Each pathway's raw score is a dot product of the sample's latent code `z`
+against that pathway's direction vector (`pathway_direction_vectors.csv`),
+then standardized `(raw - mean) / std` against the internal reference
+cohort's own distribution of that same raw score for that tissue
+(`pathway_score_calibration.csv`, `n=2198` colon / `n=970` ileum). Sixty-five
+pathways get scored in total, but only the sixteen the explorer displays get
+carried into the output JSON's `sc` vector.
 
 **6. Build the ordered `sc` vector and place the sample onto the reference UMAP layout.**
 
@@ -225,27 +232,35 @@ from ibdex_projector.embedding import sc_vector, place_sample
 
 row0 = pathway_scores.iloc[0].to_dict()
 sc = sc_vector(row0)
-placement = place_sample(sc, tissues[0])
+placement = place_sample(z[0], tissues[0])
 print(sc)
-# [2.505, 15.345, 3.701, -0.776, 4.619, 7.156, 14.025, 5.854,
-#  9.077, 7.571, 16.561, 13.609, 1.393, 0.405, 11.243, 1.266]
+# [0.478, 2.186, 0.721, 0.019, 1.27, 1.376, 2.568, 0.964,
+#  1.902, 1.765, 2.548, 2.449, 0.339, 0.051, 2.673, 1.266]
 print(placement)
-# {'u1': 9.968854, 'u2': 0.706379, 'cluster': 'C1',
-#  'cluster_color': '#E41A1C', 'cluster_confidence': 0.8672}
+# {'u1': 11.040817, 'u2': 1.026376, 'cluster': 'C3',
+#  'cluster_color': '#6ACC65', 'cluster_confidence': 0.031}
 ```
 
-`place_sample` finds the sample's 15 nearest neighbours in pathway-score
-space among the 3,168-sample reference cohort (same broad tissue) and takes
-a distance-weighted average of their `u1`/`u2` positions, plus a
-weighted-majority-vote cluster assignment.
+`place_sample` reproduces the original scientific pipeline's placement
+directly, from the sample's raw 16-D latent code `z` (not from `sc`).
+Cluster assignment is nearest-centroid in standardized latent space: a
+`StandardScaler` fit on the tissue-specific reference cohort's own latent
+codes (`reference_latent.npz`), centroids computed as the mean standardized
+position of each pre-discovered endotype (C1-C4 colon, I1-I4 ileum), and the
+new sample assigned to whichever centroid is closest by Euclidean distance.
+`u1`/`u2` come from a UMAP reducer (`n_neighbors=15, min_dist=0.3,
+metric="euclidean", random_state=42`) fit on the full 3,168-sample reference
+cohort's standardized latent codes, with the new sample placed via that
+fitted reducer's own `.transform()`. `cluster_confidence` is the relative
+margin between the nearest and second-nearest centroid (closer to 1.0 means
+clearly inside one cluster; closer to 0 means near a cluster boundary) --
+note the low value above is expected here too, since `counts_smoke.csv` is
+synthetic placeholder data with no real biological cluster structure, not a
+real sample.
 
 That `sc` vector, together with `placement`, is exactly what
 `project_counts_to_json` assembles into each sample's entry in the output
-JSON. Note the `sc` magnitudes above (up to 16.5) are far outside the
-normal calibrated range (roughly -3 to 3), because `counts_smoke.csv` is
-synthetic placeholder data meant only to exercise the pipeline, not a real
-biological sample. Real samples land in the calibrated range and plot
-sensibly among the reference cohort.
+JSON.
 
 ## Getting the JSON into the explorer
 
