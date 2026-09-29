@@ -8,7 +8,7 @@ import pandas as pd
 import torch
 
 from .conditions import build_conditions
-from .embedding import place_sample, sc_vector
+from .embedding import broad_tissue, place_sample, sc_vector
 from .model import load_model
 from .pathways import score_pathways
 from .preprocess import load_counts, preprocess_counts
@@ -58,7 +58,8 @@ def project_counts(
 
         sample = {
             "id": sample_id,
-            "tissue": tissues[i],
+            "tissue": broad_tissue(tissues[i]),
+            "tissue_detail": tissues[i],
             "sc": sc,
             "u1": placement["u1"],
             "u2": placement["u2"],

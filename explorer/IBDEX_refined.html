@@ -493,6 +493,8 @@
           EXT=loaded;
           populateControls();
           updateExtStatus();
+          const firstVisible = loaded.find(p=>p.tissue===state.tissue) || loaded[0];
+          state.selected = firstVisible.id;
           rerender(true);
         }catch(err){alert('Could not load JSON: '+err.message);}
       };
