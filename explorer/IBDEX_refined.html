@@ -300,6 +300,11 @@
       const ext=extFiltered();
       $('emptyPlot').style.display = (pts.length || ext.length) ? 'none' : 'flex';
       const ax=AX[state.axis];
+      const UMAP_AXIS_BUFFER=10;
+      const allU1=[...pts.map(p=>p.u1),...ext.map(p=>p.u1)].filter(Number.isFinite);
+      const allU2=[...pts.map(p=>p.u2),...ext.map(p=>p.u2)].filter(Number.isFinite);
+      const umapXRange = allU1.length ? [Math.min(...allU1)-UMAP_AXIS_BUFFER, Math.max(...allU1)+UMAP_AXIS_BUFFER] : undefined;
+      const umapYRange = allU2.length ? [Math.min(...allU2)-UMAP_AXIS_BUFFER, Math.max(...allU2)+UMAP_AXIS_BUFFER] : undefined;
       $('plotBadge').textContent = state.view === '3d' ? `UMAP 1 x UMAP 2 x ${ax.n} (z-axis = pathway score)` : `Coloured by cluster  |  pathway score shown in patient panel`;
       const paper=css('--surface'), bg=css('--surface-2'), ink=css('--ink'), muted=css('--muted'), line=css('--line-2');
       const axisStyle={gridcolor:line, zerolinecolor:line, linecolor:line, tickfont:{color:muted,size:11}, titlefont:{color:muted,size:12}};
@@ -326,8 +331,8 @@
           bgcolor:bg,
           aspectmode:'manual',
           aspectratio:{x:1.35,y:1,z:.62},
-          xaxis:{title:'UMAP 1',...axisStyle},
-          yaxis:{title:'UMAP 2',...axisStyle},
+          xaxis:{title:'UMAP 1',range:umapXRange,...axisStyle},
+          yaxis:{title:'UMAP 2',range:umapYRange,...axisStyle},
           zaxis:{title:AX[state.axis].n,range:[-SCORE_DISPLAY_MAX,SCORE_DISPLAY_MAX],...axisStyle},
           camera:{eye:{x:1.85,y:1.65,z:1.12},center:{x:0,y:0,z:-.05}}
         },
@@ -335,8 +340,8 @@
         margin:{l:8,r:8,t:34,b:8},uirevision:`${state.tissue}-${state.view}`
       } : {
         paper_bgcolor:paper, plot_bgcolor:bg,
-        xaxis:{title:'UMAP 1',...axisStyle},
-        yaxis:{title:'UMAP 2',...axisStyle},
+        xaxis:{title:'UMAP 1',range:umapXRange,...axisStyle},
+        yaxis:{title:'UMAP 2',range:umapYRange,...axisStyle},
         legend:{font:{color:muted,size:11},orientation:'h',x:.02,y:1.08,bgcolor:'rgba(0,0,0,0)'},
         margin:{l:54,r:18,t:48,b:50},uirevision:`${state.tissue}-${state.view}`
       };
