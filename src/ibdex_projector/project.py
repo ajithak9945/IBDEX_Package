@@ -54,7 +54,7 @@ def project_counts(
     for i, sample_id in enumerate(x.index.tolist()):
         row_pathway_scores = pathway_scores.iloc[i].to_dict()
         sc = sc_vector(row_pathway_scores)
-        placement = place_sample(sc, tissues[i])
+        placement = place_sample(z[i], tissues[i])
 
         sample = {
             "id": sample_id,

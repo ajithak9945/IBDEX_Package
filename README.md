@@ -255,13 +255,14 @@ in the examples above). Open the [explorer](https://ibdexmd.org), click
 `sc` (calibrated pathway score) vector, `u1`/`u2` plot coordinates, and a
 `cluster` / `cluster_color` / `cluster_confidence` endotype assignment, all
 in the schema the explorer expects, so it renders immediately alongside the
-reference cohort. Coordinates are produced by locating each new sample's
-nearest neighbours in pathway-score space among the 3,168-sample reference
-cohort and taking a distance-weighted average of their reference UMAP
-positions, since the original UMAP model used to lay out the reference
-cohort itself was not retained. `latent` (raw 16-D CVAE coordinates) and the
-full `pathway_scores` dictionary are also included in the JSON for
-downstream analysis outside the explorer.
+reference cohort. Coordinates and endotype assignment reproduce the original scientific
+pipeline directly: cluster assignment is nearest-centroid in standardized
+16-D CVAE latent space (against the tissue-specific reference cohort's
+discovered C1-C4 / I1-I4 centroids), and `u1`/`u2` come from a UMAP reducer
+fit on the full 3,168-sample reference cohort's latent codes, transformed
+for each new sample. `latent` (raw 16-D CVAE coordinates) and the full
+`pathway_scores` dictionary are also included in the JSON for downstream
+analysis outside the explorer.
 
 ## Repository structure
 
