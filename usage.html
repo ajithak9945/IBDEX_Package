@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Usage Walkthrough: IBDex</title>
+<meta name="description" content="A real, end-to-end run of the ibdex-projector pipeline from raw RNA-seq counts to an explorer-ready JSON, using the public GSE66207 colon cohort as a worked example." />
+<link rel="stylesheet" href="assets/site.css" />
+</head>
+<body>
+<header class="site-header">
+  <nav class="nav">
+    <a class="brand" href="index.html"><span class="dot"></span> IBDex</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    </button>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="quickstart.html">Quick Start</a>
+      <a href="usage.html" class="active">Usage Walkthrough</a>
+      <a href="plots.html">Understanding the Plots</a>
+      <a href="methodology.html">Methodology</a>
+      <a href="about.html">About</a>
+      <a href="explorer/IBDEX_refined.html" class="cta">Open Explorer</a>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <div class="wrap hero">
+    <span class="pill">Worked example &middot; GSE66207</span>
+    <h1>From raw counts to an explorer-ready JSON</h1>
+    <p class="lede">
+      This page runs the full <code>ibdex-projector</code> pipeline end to end against a
+      real public cohort, <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE66207" target="_blank" rel="noopener">GSE66207</a>
+      (33 colon RNA-seq biopsies: 20 Crohn's disease, 13 non-IBD controls). Every command and
+      every number below is real output, captured by actually running the package against these
+      files &mdash; nothing here is hand-written or simulated.
+    </p>
+  </div>
+
+  <div class="wrap">
+    <div class="card">
+      <div class="step">
+        <div class="num">1</div>
+        <div class="body">
+          <h3>Start from two raw input files</h3>
+          <p>
+            A raw counts matrix and a GEO sample metadata sheet, both exactly as downloaded, with
+            no pre-processing:
+          </p>
+          <div class="kv">
+            <span>gse66207_counts.csv &middot; GeneID (Entrez) &times; 33 samples &middot; 4.0 MB</span>
+            <span>GSE66207_sample_metadata.csv &middot; full GEO metadata, 41 columns</span>
+          </div>
+          <p>The counts file looks like this (first two rows):</p>
+<pre>GeneID,GSM1616912,GSM1616913,GSM1616914,...
+100287102,2,3,3,...
+653635,39,72,64,...</pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="num">2</div>
+        <div class="body">
+          <h3>Build the metadata columns the package needs</h3>
+          <p>
+            <code>ibdex-projector</code> only needs four columns: a sample ID matching the counts
+            file, a tissue label, and two optional passthrough fields (disease, cohort) that the
+            explorer shows on the patient card. GEO's metadata doesn't come in that shape, so this
+            short script derives it &mdash; this is the only hand-written code in the whole
+            walkthrough, everything after this point is the package's own pipeline:
+          </p>
+<pre>import pandas as pd
+
+meta = pd.read_csv("GSE66207_sample_metadata.csv")
+
+def map_disease(row):
+    d = str(row["char_disease"])
+    if "Crohn's Disease" in d:
+        return "CD"
+    if d.startswith("Normal"):
+        return "Control"
+    return d
+
+out = pd.DataFrame({
+    "sample_id": meta["geo_accession"],
+    "tissue": "colon",   # source_name_ch1 is just "Colon" for every sample
+    "disease": meta.apply(map_disease, axis=1),
+    "cohort": "GSE66207",
+})
+out.to_csv("gse66207_metadata.csv", index=False)</pre>
+          <p>Result: 20 samples mapped to <code>CD</code>, 13 to <code>Control</code>, all tissue <code>colon</code>.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="num">3</div>
+        <div class="body">
+          <h3>Run the pipeline</h3>
+          <p>From the command line:</p>
+<pre>ibdex project \
+  --counts gse66207_counts.csv \
+  --metadata gse66207_metadata.csv \
+  --sample-col sample_id \
+  --tissue-col tissue \
+  --out gse66207_projection.json</pre>
+          <p>or equivalently from Python:</p>
+<pre>from ibdex_projector.project import project_counts_to_json
+
+project_counts_to_json(
+    "gse66207_counts.csv",
+    "gse66207_metadata.csv",
+    sample_col="sample_id",
+    tissue_col="tissue",
+    out="gse66207_projection.json",
+)</pre>
+          <p>
+            Internally this resolves every Entrez GeneID to an HGNC symbol, converts to
+            log2(CPM&nbsp;+&nbsp;1), restricts to the frozen 3,000-gene panel, z-scores and clips,
+            encodes with the frozen CVAE, scores pathways, and places each sample onto the
+            reference UMAP layout &mdash; the same six steps documented in full in the
+            <a href="https://github.com/ajithak9945/IBDEX_Package#step-by-step-walkthrough" target="_blank" rel="noopener">README's step-by-step walkthrough</a>.
+          </p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="num">4</div>
+        <div class="body">
+          <h3>The real QC report from this run</h3>
+<pre>{
+  "total_input_genes": 39376,
+  "mapped_genes": 39376,
+  "unmapped_genes": 0,
+  "duplicated_symbols_after_mapping": 2,
+  "unique_symbols_after_collapse": 39374,
+  "orientation": "genes_x_samples",
+  "n_samples": 33,
+  "n_panel_genes": 3000,
+  "n_panel_genes_present": 3000,
+  "n_panel_genes_missing": 0,
+  "missing_panel_genes": []
+}</pre>
+          <p>
+            Every one of the 39,376 input Entrez IDs resolved to an HGNC symbol, and all 3,000
+            panel genes were present &mdash; nothing was filled in at the training mean for this
+            cohort.
+          </p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="num">5</div>
+        <div class="body">
+          <h3>What came out</h3>
+          <p>33 samples placed onto the reference layout, split across four colon endotypes:</p>
+          <div class="kv">
+            <span>C2: 24 samples</span>
+            <span>C4: 5 samples</span>
+            <span>C1: 3 samples</span>
+            <span>C3: 1 sample</span>
+          </div>
+          <p>UMAP coordinates landed directly inside the reference cohort's own spread (u1: 7.10&ndash;14.37, u2: &minus;0.56&ndash;7.12), the expected result for a real colon cohort placed into the frozen reference. One sample's full entry in the output JSON:</p>
+<pre>{
+  "id": "GSM1616912",
+  "tissue": "colon",
+  "tissue_detail": "colon_unspecified",
+  "u1": 9.929125785827637,
+  "u2": 4.431132793426514,
+  "cluster": "C2",
+  "disease": "CD",
+  "cohort": "GSE66207",
+  "sc": [0.6338, -0.4326, 0.9078, 0.5465, 1.4324, 1.0993, -1.4332,
+         -1.0996, -0.9069, 0.5074, 0.0361, -0.5726, -1.7206, 0.5355,
+         -2.0327, ...]
+}</pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="num">6</div>
+        <div class="body">
+          <h3>Load it into the explorer</h3>
+          <p>
+            Open the <a href="explorer/IBDEX_refined.html">explorer</a>, click
+            <strong>Upload external JSON</strong>, and pick the output file. The 33 GSE66207
+            samples render alongside the reference cohort as gold star/diamond markers,
+            selectable and filterable exactly like the built-in cohorts.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <h3>Download this example</h3>
+      <p style="color:var(--muted);font-size:14.5px;margin-top:0">
+        All three files from this walkthrough &mdash; the raw input, the derived metadata, and the
+        finished projection &mdash; so you can load the result straight into the explorer or use
+        them as a template for your own cohort.
+      </p>
+      <div class="kv">
+        <span><a href="examples/gse66207/gse66207_counts.csv" download>gse66207_counts.csv</a> &middot; raw input</span>
+        <span><a href="examples/gse66207/gse66207_metadata.csv" download>gse66207_metadata.csv</a> &middot; derived metadata</span>
+        <span><a href="examples/gse66207/gse66207_projection.json" download>gse66207_projection.json</a> &middot; ready to upload</span>
+      </div>
+    </div>
+
+    <div class="disclaimer" style="margin-top:20px">
+      For the smallest possible reproducible example (a 2-sample synthetic smoke test), see
+      <code>examples/counts_smoke.csv</code> in the <a href="https://github.com/ajithak9945/IBDEX_Package">GitHub repository</a>,
+      also documented in the README. GSE66207 above is a real cohort, useful for seeing the
+      pipeline behave on real biology rather than placeholder data.
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>IBDex &middot; University of Birmingham</span>
+    <span><a href="https://github.com/ajithak9945/IBDEX_Package">Source on GitHub</a></span>
+  </div>
+</footer>
+<script src="assets/nav.js"></script>
+</body>
+</html>

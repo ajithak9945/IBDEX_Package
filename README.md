@@ -14,6 +14,7 @@ latent geometry.
 ## Links
 
 - Explorer at [ibdexmd.org](https://ibdexmd.org)
+- Worked example (raw counts &rarr; JSON, real GSE66207 run) at [ibdexmd.org/usage.html](https://ibdexmd.org/usage.html)
 - Source on [github.com/ajithak9945/IBDEX_Package](https://github.com/ajithak9945/IBDEX_Package)
 - Contact at [ajithak9945@gmail.com](mailto:ajithak9945@gmail.com)
 
@@ -292,7 +293,10 @@ IBDEX_Package/
 │   ├── gene_mapping.py      gene identifier resolution to HGNC symbols
 │   └── cli.py              the `ibdex` command line entry point
 ├── explorer/               the interactive HTML explorer
-├── examples/               a small smoke-test dataset
+├── examples/               example inputs and outputs
+│   ├── counts_smoke.csv, metadata.csv   a small 2-sample synthetic smoke test
+│   └── gse66207/           a real 33-sample public cohort run end to end,
+│                           see the worked example linked above
 └── tests/
 ```
 
